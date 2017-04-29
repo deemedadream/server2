@@ -1,82 +1,68 @@
+package server2;
 import java.net.*; 
 import java.io.*; 
 
 public class TCPserver { 
-  public static void main (String args[]) 
-  { 
-	try{ 
-			int serverPort = 5554; 
-			ServerSocket listenSocket = new ServerSocket(serverPort); 
-	  
-			System.out.println("server start listening... ... ...");
-		
-			while(true) { 
-				Socket clientSocket = listenSocket.accept(); 
-				Connection c = new Connection(clientSocket);
-				System.out.println("connected to"+listenSocket.getInetAddress().getHostAddress());				
-			} 
-	} 
-	catch(IOException e) {
-		System.out.println("Listen :"+e.getMessage());} 
-  }
+  public static void main(String arg[]) {
+    ServerSocket serverSocket = null;
+    Socket socket = null;
+    ObjectInputStream in = null;
+    ObjectOutputStream out = null;
+
+
+    try {
+        serverSocket = new ServerSocket(5554);
+        System.out.println("Listening :5554");
+    } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
+
+    while (true) {
+        try {
+            socket = serverSocket.accept();
+            in = new ObjectInputStream(socket.getInputStream());
+            out = new ObjectOutputStream(socket.getOutputStream());
+            out.flush();
+
+            System.out.println("ip: " + socket.getInetAddress());
+            Object state1 = in.readObject();  //Message captured from chat client.
+            System.out.println(" message received from ");
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } 
+
+        finally {
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
-
-class Connection extends Thread { 
-	DataInputStream input; 
-	DataOutputStream output; 
-	Socket clientSocket; 
-	
-	public Connection (Socket aClientSocket) { 
-		try { 
-					clientSocket = aClientSocket; 
-					input = new DataInputStream( clientSocket.getInputStream()); 
-					output =new DataOutputStream( clientSocket.getOutputStream()); 
-					this.start(); 
-		} 
-			catch(IOException e) {
-			System.out.println("Connection:"+e.getMessage());
-			} 
-	  } 
-
-	  public void run() { 
-		try { // an echo server 
-		  //  String data = input.readUTF();
-				
-			  FileWriter out = new FileWriter("test.txt");
-			  BufferedWriter bufWriter = new BufferedWriter(out);
-		   
-			  //Step 1 read length
-			  int nb = input.readInt();
-			  System.out.println("Read Length"+ nb);
-			  byte[] digit = new byte[nb];
-			  //Step 2 read byte
-			   System.out.println("Writing.......");
-			  for(int i = 0; i < nb; i++)
-				digit[i] = input.readByte();
-			  
-			   String st = new String(digit);
-			  bufWriter.append(st);
-			   bufWriter.close();
-				System.out.println ("receive from : " + 
-				clientSocket.getInetAddress() + ":" +
-				clientSocket.getPort() + " message - " + st);
-			  
-			  //Step 1 send length
-			  output.writeInt(st.length());
-			  //Step 2 send length
-			  output.writeBytes(st); // UTF is a string encoding
-		  //  output.writeUTF(data); 
-			} 
-			catch(EOFException e) {
-			System.out.println("EOF:"+e.getMessage()); } 
-			catch(IOException e) {
-			System.out.println("IO:"+e.getMessage());}  
-   
-			finally { 
-			  try { 
-				  clientSocket.close();
-			  }
-			  catch (IOException e){/*close failed*/}
-			}
-		}
 }
