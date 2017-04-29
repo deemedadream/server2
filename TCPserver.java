@@ -5,14 +5,15 @@ public class TCPserver {
   public static void main (String args[]) 
   { 
 	try{ 
-			int serverPort = 6880; 
+			int serverPort = 5554; 
 			ServerSocket listenSocket = new ServerSocket(serverPort); 
 	  
 			System.out.println("server start listening... ... ...");
 		
 			while(true) { 
 				Socket clientSocket = listenSocket.accept(); 
-				Connection c = new Connection(clientSocket); 
+				Connection c = new Connection(clientSocket);
+				System.out.println("connected to"+listenSocket.getInetAddress().getHostAddress());				
 			} 
 	} 
 	catch(IOException e) {
