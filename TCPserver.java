@@ -1,7 +1,7 @@
 import java.net.*; 
 import java.io.*; 
 
-public class TCPServer { 
+public class TCPserver { 
   public static void main (String args[]) 
   { 
 	try{ 
