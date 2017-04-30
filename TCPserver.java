@@ -26,7 +26,7 @@ public class TCPserver {
             out.flush();
 
             System.out.println("ip: " + socket.getInetAddress());
-            Object state1 = in.readObject();  //Message captured from chat client.
+            GameState state1 = (GameState) in.readObject();  //Message captured from chat client.
             System.out.println(" message received from ");
             out.flush();
         } catch (IOException e) {

@@ -1,4 +1,4 @@
-package com.androidsrc.client;
+
 
 /**
  * Created by Tahir on 4/28/2017.
